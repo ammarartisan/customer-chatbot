@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Customer Support Chatbot</h1>
+<form id="chat-form" method="POST">
+    {{ form.hidden_tag() }}
+    <div>{{ form.query.label }} {{ form.query }}</div>
+    <div>{{ form.submit }}</div>
+</form>
+<div id="chat-log"></div>
+<script>
+    document.getElementById('chat-form').onsubmit = function(event) {
+        event.preventDefault();
+        let form = event.target;
+        let formData = new FormData(form);
+        fetch("/", {
+            method: 'POST',
+            body: formData
+        }).then(response => response.json())
+          .then(data => {
+              let chatLog = document.getElementById('chat-log');
+              chatLog.innerHTML += `<p>User: ${form.query.value}</p><p>Bot: ${data.response}</p>`;
+              form.query.value = '';
+          });
+    };
+</script>
+{% endblock %}
